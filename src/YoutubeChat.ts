@@ -97,16 +97,17 @@ export class YoutubeChat implements DurableObject {
 			if (!continuation) {
 				this.initialized = false;
 				return new Response(
-					`Failed to load chat - ${JSON.stringify(data.initialData)}`,
+					'Failed to load chat - Live is probably over or never started',
 					{
-					status: 404,
-				});
+						status: 404,
+					}
+				);
 			}
 
 			const token = getContinuationToken(continuation);
 			if (!token) {
 				this.initialized = false;
-				return new Response('Failed to load chat 2', {
+				return new Response('Failed to load chat - Empty continuation token', {
 					status: 404,
 				});
 			}
@@ -209,7 +210,10 @@ export class YoutubeChat implements DurableObject {
 
 	private handleWebsocket: Handler = async (req) => {
 		if (req.headers.get('Upgrade') !== 'websocket')
-			return new Response('Expected a websocket', { status: 400 });
+			return new Response(
+				'<h1>Youtube to Websocket Server</h1><p>Please connect using Websocket</p>',
+				{ status: 400 }
+			);
 
 		const url = new URL(req.url);
 		const adapterType = url.searchParams.get('adapter') ?? 'json';
