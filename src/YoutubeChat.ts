@@ -89,14 +89,16 @@ export class YoutubeChat implements DurableObject {
 				}
 			});
 			const continuation = traverseJSON(data.initialData, (value) => {
-				if (value.title === 'Live chat') {
+				if (value.title === 'Live chat' || value.title === 'チャット') {
 					return value.continuation as Continuation;
 				}
 			});
 
 			if (!continuation) {
 				this.initialized = false;
-				return new Response('Failed to load chat', {
+				return new Response(
+					`Failed to load chat - ${JSON.stringify(data.initialData)}`,
+					{
 					status: 404,
 				});
 			}
@@ -104,7 +106,7 @@ export class YoutubeChat implements DurableObject {
 			const token = getContinuationToken(continuation);
 			if (!token) {
 				this.initialized = false;
-				return new Response('Failed to load chat', {
+				return new Response('Failed to load chat 2', {
 					status: 404,
 				});
 			}
